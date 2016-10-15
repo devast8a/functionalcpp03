@@ -1,51 +1,39 @@
-#include "lambda_expression.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-using namespace functionalcpp::lambda_expression;
+#include "placeholder.hpp"
+#include "lambda_expression.hpp"
+
 using namespace functionalcpp::placeholder;
+using namespace functionalcpp::lambda_expression;
+
+template<class T> int myfunc(T f){
+    return f(0x44, 0x22);
+}
 
 int main(){
-    std::vector<int> vec;
-
-    // Easy to use, FuncN<ReturnType, Paramter1Type, Parameter2Type, ...>
-    // Where N is the number of parameters
-    Func0<int> return_10 = lambda/ 10;
-
-    // You're rude and want to ignore parameters, that's fine by me
-    Func1<int, int> ignore_parameter = lambda/ 4;
-
-    // Want to actually do something useful?
-    Func1<int, int> bam_now_youre_adding_numbers = lambda/ _ + 5;
-
-    // Works in other places too
-    transform(vec.begin(), vec.end(), vec.begin(), lambda/ _ + 2);
-
-    // If you're rude? Still works in other places
-    transform(vec.begin(), vec.end(), vec.begin(), lambda/ 5);
-
-    // Bet it's not typesafe tho right?
-    // WRONG.
-    // Func1<int, std::string> abc = lambda/ _ + 3;
-    // THAT WOULD HAVE FAILED.
-    
-    // Variables?
-    int x = 10;
-    Func1<int, int> wow = lambda/ _ + x;
-
-    // What happens if I change x?
-    // The value of x is captured when you make the lambda
-    // Don't want that?
-    // This is broken, I may fix it... probably won't
-    //Func1<int, int> such_references = lambda/ _ + ref(x);
-    
-    // How about something other than adding?
-    Func1<bool, int> even_more_useful = lambda/ _ + 3 > 6;
-
-    // It's in early access, please see my kick scammer
-    // Operators other than + and > will be added as future DLC
-
-    return 0;
+    std::cout << myfunc(lambda/ _ + _) << std::endl;
 }
+
+// Expression<ExpressionTree, ParameterVector>
+
+// Sum of two functions A and B should be max(sum(positional argumnets), specified arguments...)
+// A     = _, _, _
+// B     = _, _
+// A + B = 5 Arguments, 5 positional.
+//
+// A     = _0
+// B     = _, _, _
+// A + B = 3 Arguments, 1 (positional & specified), 2 positional
+//
+// A     = _4
+// B     = _, _, _
+// A + B = 5 Arguments, 3 positional, 1 skipped, 1 specified
+//
+// A     = _3
+// B     = _1
+// A + B = 4 Arguments, 1 skipped, 1 specified, 1 skipped, 1 specified
+
+// It's in early access, please see my kick scammer
+// Operators other than + and > will be added as future DLC

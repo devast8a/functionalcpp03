@@ -3,189 +3,192 @@
 
 #include "func.hpp"
 #include "placeholder.hpp"
-#include "operators.hpp"
+#include "tuple.hpp"
+
 
 namespace functionalcpp{ namespace lambda_expression {
 
-// TODO remove this using namespace
 using namespace functionalcpp::function;
+using namespace functionalcpp::tupleNS;
 
-/**
- * LambdaKeyword, where magic happens.
- */
-struct LambdaKeyword {} lambda;
-
-/**
- * A function which returns a constant value
- */
-template<typename TConstant> struct Constant :
-    FuncImpl0<Constant<TConstant>, TConstant>
-{
+/*******************************************************************************
+ * Expression implementations
+ * TArgs is a type safe tuple (see tuple), containing the arguments given to the
+ * lambda expression when being called.
+ *
+ * evaluate() is probably the perfect place to work out return value types etc
+ *
+ * Perhaps we remove all ancillary information from Expressions, like
+ * GetArg's TType and N, or BinaryExpression's evaluate return type
+ * Then populate this information only when evaluate is called.
+ ******************************************************************************/
+template<class TConstant> struct Constant{
     const TConstant value;
-
     Constant(TConstant value) : value(value){}
 
-    TConstant evaluate() const{
+    template<class TArgs> TConstant evaluate(const TArgs&) const{
         return value;
     }
 };
 
-/**
- * Select argument one from a function with one argument.
- */
-template<typename T1> struct Arg1From1 :
-    FuncImpl1<Arg1From1<T1>, T1, T1>
-{
-    T1 evaluate(T1 a1) const{
-        return a1;
+template<class TType, int N> struct GetArg{
+    template<class TArgs> TType evaluate(const TArgs& args) const{
+        return get<N>::from(args);
     }
 };
 
-/**
- * Dereference the given variable
- */
-template<typename T> struct Dereference :
-    FuncImpl0<Dereference<T>, T>
-{
-    const T* reference;
+template<class TLeft, class TRight> struct BinaryExpression{
+    const TLeft left;
+    const TRight right;
 
-    Dereference(T* reference) : reference(reference){}
+    BinaryExpression(const TLeft left, const TRight right) :
+        left(left), right(right){}
 
-    T evaluate() const{
-        return *reference;
+    template<class TArgs> int evaluate(const TArgs& args) const{
+        return left.evaluate(args) + right.evaluate(args);
     }
 };
 
-
-/**
- * Implements binary operations
+/*******************************************************************************
+ * Expression wrappers,
+ * These guys keep track of the signature of the Lambda expression as a whole
+ * without mixing it with the expression tree itself.
  *
- * The actual binary operation is implemented by TOperator
- * TLeft and TRight are expressions for the right and left hand sides,
- * will be something like TConstant<...> or BinaryOperator<...>
- *
- * Essentially they'll be something that inherits from FuncImplX
- *
- * evaluate taking an int and only the left hand side being given arguments
- * are problems that are talked about in problems.md
- */
-template<typename TOperator, typename TLeft, typename TRight>
-struct BinaryOperator :
-    FuncImpl1<
-        BinaryOperator<TOperator, TLeft, TRight>,
-        typename TOperator::return_type,
-        // This is just a dummy value for now, pretty much we shouldn't be taking any value?
-        typename TRight::return_type
-    >
-{
-    TLeft left;
-    TRight right;
+ * The idea being that we can pick up our expression and arbitrarily modify the
+ * signature of the lambda without modifying the expression tree itself. This is
+ * desirable because:
+ * - We want any expression to be able to take an arbitrary number of arguments
+ *   which requires a ton of boilerplate.
+ * - We want to be able to update the signature of our expression at anytime,
+ *   say as the result of a binary expression, modifying the entire expression
+ *   tree every time we need to update the signature is tedious, error prone,
+ *   and slow.
+ ******************************************************************************/
+template<class TExpression, class TR> struct Expression0 : Func0<TR>{
+    const TExpression expression;
+    typedef TExpression expression_type;
 
-    BinaryOperator(TLeft left, TRight right) :
-        left(left),
-        right(right){}
+    Expression0(TExpression expression) : expression(expression){}
 
-    typename TOperator::return_type evaluate(int input){
-        return TOperator::evaluate(
-            left(input),
-            right()
+    TR apply(){
+        return expression.evaluate(
+            tuple::create()
+        );
+    }
+
+    TR operator()(){
+        return expression.evaluate(
+            tuple::create()
         );
     }
 };
 
-/**
- * Horrendous mess that implements the > operator
- */
-template<typename TLeft, typename TConstant>
-BinaryOperator<
-    operators::gt<
-        bool,   // Assume for now that > always returns bool
-        typename TLeft::return_type,
-        TConstant
-    >,
-    TLeft,
-    Constant<TConstant>
->
-operator > (TLeft left, TConstant right){
-    return BinaryOperator<
-        operators::gt<
-            bool,
-            typename TLeft::return_type,
-            TConstant
-        >,
-        TLeft,
-        Constant<TConstant>
-    >
-    (
-        left,
-        Constant<TConstant>(right)
+template<class TExpression, class TR, class T0> struct Expression1 : Func1<TR, T0>{
+    const TExpression expression;
+    typedef TExpression expression_type;
+
+    Expression1(TExpression expression) : expression(expression){}
+
+    TR operator()(const T0& v0){
+        return expression.evaluate(
+            tuple::create(v0)
+        );
+    }
+
+    template<typename T1> TR operator()(const T0& v0, const T1&){
+        return expression.evaluate(
+            tuple::create(v0)
+        );
+    }
+
+    TR apply(const T0& v0){
+        return expression.evaluate(
+            tuple::create(v0)
+        );
+    }
+};
+
+template<class TExpression, class TR, class T0, class T1> struct Expression2{
+    const TExpression expression;
+    typedef TExpression expression_type;
+
+    Expression2(TExpression expression) : expression(expression){}
+
+    TR operator()(const T0& v0, const T1& v1){
+        return expression.evaluate(
+            tuple::create(v0, v1)
+        );
+    }
+};
+
+/*******************************************************************************
+ * Operator definitions
+ ******************************************************************************/
+
+// Lambda Keyword //////////////////////////////////////////////////////////////
+struct LambdaKeyword {} lambda;
+
+Expression1<GetArg<int, 0>, int, int>
+operator /(LambdaKeyword, const placeholder::PlaceholderPositional&){
+    return Expression1<GetArg<int, 0>, int, int>(
+        GetArg<int, 0>()
     );
 }
 
-/**
- * Horrendous mess that implements the + operator
- */
-template<typename TLeft, typename TConstant>
-BinaryOperator<
-    operators::add<
-        typename TLeft::return_type,
-        typename TLeft::return_type,
-        TConstant
-    >,
-    TLeft,
-    Constant<TConstant>
->
-operator + (TLeft left, TConstant right){
-    return BinaryOperator<
-        operators::add<
-            typename TLeft::return_type,
-            typename TLeft::return_type,
-            TConstant
-        >,
-        TLeft,
-        Constant<TConstant>
-    >
-    (
-        left,
-        Constant<TConstant>(right)
+template<class TConstant>
+Expression0<Constant<TConstant>, TConstant>
+operator /(LambdaKeyword, const TConstant& constant){
+    return Expression0<Constant<TConstant>, TConstant>(
+        Constant<TConstant>(constant)
     );
 }
 
-/*****************************************************************************
- * The following operators implement the / part in the "lambda/" keyword
- *
- * By using an operator after our "keyword" we get a few neat things
- * - We don't have to delimit the other end of our expression
- * - We may not need to wrap literals in our expression as lambda/ will convert
- *   things to the right of it to lambda expressions.
- ****************************************************************************/
-
-template<typename TConstant> Constant<TConstant> operator /(LambdaKeyword, TConstant constant){
-    return Constant<TConstant>(constant);
+// Other operators /////////////////////////////////////////////////////////////
+template<class TLeft>
+// TODO: Work out a method of incrementing expression objects
+Expression2<BinaryExpression<
+    typename TLeft::expression_type,
+    GetArg<int, 1>
+// TODO: Again how do we handle return types?
+>, int, int, int>
+operator +(const TLeft left, const placeholder::PlaceholderPositional&){
+    return Expression2<BinaryExpression<
+        typename TLeft::expression_type,
+        GetArg<int, 1>
+    >, int, int, int>(
+        BinaryExpression<
+            typename TLeft::expression_type,
+            GetArg<int, 1>
+        >(
+            left.expression,
+            GetArg<int, 1>()
+        )
+    );
 }
 
-Arg1From1<int> operator /(LambdaKeyword, placeholder::PlaceholderPositional){
-    return Arg1From1<int>();
+template<class TLeft, class TConstant>
+// TODO: Work out a method of incrementing transition objects
+Expression1<BinaryExpression<
+    typename TLeft::expression_type,
+    Constant<TConstant>
+// TODO: Again how do we handle return types?
+>, int, int>
+operator +(const TLeft left, const TConstant right){
+    return Expression1<BinaryExpression<
+        typename TLeft::expression_type,
+        Constant<TConstant>
+    >, int, int>(
+        BinaryExpression<
+            typename TLeft::expression_type,
+            Constant<TConstant>
+        >(
+            left.expression,
+            Constant<TConstant>(right)
+        )
+    );
 }
 
-// Stop lambda/ operator from attempting to wrap already valid expressions with Constant
-template<typename T> Dereference<T> operator /(LambdaKeyword, Dereference<T> right){
-    return right;
-}
 
-template<typename T> Constant<T> operator /(LambdaKeyword, Constant<T> right){
-    return right;
-}
-
-/*****************************************************************************
- * Other functions that are exported as part of lambda_expression
- ****************************************************************************/
-template<typename T> Dereference<T> ref(T& reference){
-    return Dereference<T>(&reference);
-}
-template<typename T> Constant<T> val(T value){
-    return Constant<T>(value);
-}
 
 }} // namespace functionalcpp::lambda_expression
 
