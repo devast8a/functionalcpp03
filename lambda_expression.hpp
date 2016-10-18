@@ -4,12 +4,15 @@
 #include "func.hpp"
 #include "placeholder.hpp"
 #include "tuple.hpp"
+#include "operators.hpp"
 
 
 namespace functionalcpp{ namespace lambda_expression {
 
 using namespace functionalcpp::function;
 using namespace functionalcpp::tupleNS;
+using namespace functionalcpp::placeholder;
+using namespace functionalcpp::operators;
 
 /*******************************************************************************
  * Expression implementations
@@ -22,30 +25,47 @@ using namespace functionalcpp::tupleNS;
  * GetArg's TType and N, or BinaryExpression's evaluate return type
  * Then populate this information only when evaluate is called.
  ******************************************************************************/
-template<class TConstant> struct Constant{
-    const TConstant value;
-    Constant(TConstant value) : value(value){}
+template<typename TConstant> struct ConstantExpr{
+    static const size_t positional_args = 0;
 
-    template<class TArgs> TConstant evaluate(const TArgs&) const{
+    const TConstant value;
+    ConstantExpr(TConstant value) : value(value){}
+
+    template<size_t N, typename TArgs> TConstant evaluate(const TArgs&) const{
         return value;
     }
 };
 
-template<class TType, int N> struct GetArg{
-    template<class TArgs> TType evaluate(const TArgs& args) const{
-        return get<N>::from(args);
+struct PositionalArgExpr{
+    static const size_t positional_args = 1;
+
+    template<size_t N, typename TArgs> typename get<N, TArgs>::type evaluate(const TArgs& args) const{
+        return get<N, TArgs>::value(args);
     }
 };
 
-template<class TLeft, class TRight> struct BinaryExpression{
+template<size_t N> struct SpecificArgExpr{
+    static const size_t positional_args = 0;
+
+    template<size_t _IGNORE, typename TArgs> typename get<N, TArgs>::type evaluate(const TArgs& args) const{
+        return get<N, TArgs>::value(args);
+    }
+};
+
+template<typename TLeft, typename TRight, typename TOperator> struct BinaryExpr{
     const TLeft left;
     const TRight right;
 
-    BinaryExpression(const TLeft left, const TRight right) :
+    static const size_t positional_args = TLeft::positional_args + TRight::positional_args;
+
+    BinaryExpr(const TLeft left, const TRight right) :
         left(left), right(right){}
 
-    template<class TArgs> int evaluate(const TArgs& args) const{
-        return left.evaluate(args) + right.evaluate(args);
+    template<size_t N, typename TArgs> int evaluate(const TArgs& args) const{
+        binary_operator<TOperator, any, int, int>::evaluate(
+            left.template evaluate<N, TArgs>(args),
+            right.template evaluate<N + TLeft::positional_args, TArgs>(args)
+        );
     }
 };
 
@@ -64,59 +84,18 @@ template<class TLeft, class TRight> struct BinaryExpression{
  *   tree every time we need to update the signature is tedious, error prone,
  *   and slow.
  ******************************************************************************/
-template<class TExpression, class TR> struct Expression0 : Func0<TR>{
+template<typename TExpression, typename TFunc> struct Expression :
+    FuncN<Expression<TExpression, TFunc>, TFunc>
+{
     const TExpression expression;
     typedef TExpression expression_type;
+    typedef TFunc function_type;
 
-    Expression0(TExpression expression) : expression(expression){}
+    Expression(TExpression expression) : expression(expression){}
 
-    TR apply(){
-        return expression.evaluate(
-            tuple::create()
-        );
-    }
-
-    TR operator()(){
-        return expression.evaluate(
-            tuple::create()
-        );
-    }
-};
-
-template<class TExpression, class TR, class T0> struct Expression1 : Func1<TR, T0>{
-    const TExpression expression;
-    typedef TExpression expression_type;
-
-    Expression1(TExpression expression) : expression(expression){}
-
-    TR operator()(const T0& v0){
-        return expression.evaluate(
-            tuple::create(v0)
-        );
-    }
-
-    template<typename T1> TR operator()(const T0& v0, const T1&){
-        return expression.evaluate(
-            tuple::create(v0)
-        );
-    }
-
-    TR apply(const T0& v0){
-        return expression.evaluate(
-            tuple::create(v0)
-        );
-    }
-};
-
-template<class TExpression, class TR, class T0, class T1> struct Expression2{
-    const TExpression expression;
-    typedef TExpression expression_type;
-
-    Expression2(TExpression expression) : expression(expression){}
-
-    TR operator()(const T0& v0, const T1& v1){
-        return expression.evaluate(
-            tuple::create(v0, v1)
+    template<typename TR, typename TArgs> TR apply_tuple(const TArgs& args) const{
+        return expression.template evaluate<0, TArgs>(
+            args
         );
     }
 };
@@ -128,68 +107,97 @@ template<class TExpression, class TR, class T0, class T1> struct Expression2{
 // Lambda Keyword //////////////////////////////////////////////////////////////
 struct LambdaKeyword {} lambda;
 
-Expression1<GetArg<int, 0>, int, int>
-operator /(LambdaKeyword, const placeholder::PlaceholderPositional&){
-    return Expression1<GetArg<int, 0>, int, int>(
-        GetArg<int, 0>()
+Expression<
+    PositionalArgExpr,
+    FuncSig1<int, int>
+>
+operator /(LambdaKeyword, const PlaceholderPositional&){
+    return Expression<
+        PositionalArgExpr,
+        FuncSig1<int, int>
+    >(
+        PositionalArgExpr()
     );
 }
 
-template<class TConstant>
-Expression0<Constant<TConstant>, TConstant>
+template<typename TConstant>
+Expression<
+    ConstantExpr<TConstant>,
+    FuncSig0<TConstant>
+>
 operator /(LambdaKeyword, const TConstant& constant){
-    return Expression0<Constant<TConstant>, TConstant>(
-        Constant<TConstant>(constant)
+    return Expression<
+        ConstantExpr<TConstant>,
+        FuncSig0<TConstant>
+    >(
+        ConstantExpr<TConstant>(constant)
     );
 }
 
 // Other operators /////////////////////////////////////////////////////////////
-template<class TLeft>
-// TODO: Work out a method of incrementing expression objects
-Expression2<BinaryExpression<
-    typename TLeft::expression_type,
-    GetArg<int, 1>
-// TODO: Again how do we handle return types?
->, int, int, int>
-operator +(const TLeft left, const placeholder::PlaceholderPositional&){
-    return Expression2<BinaryExpression<
-        typename TLeft::expression_type,
-        GetArg<int, 1>
-    >, int, int, int>(
-        BinaryExpression<
-            typename TLeft::expression_type,
-            GetArg<int, 1>
-        >(
-            left.expression,
-            GetArg<int, 1>()
+template<typename TWrapper>
+Expression<
+    BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>,
+    typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
+>
+operator +(const TWrapper& wrapper, const PlaceholderPositional&){
+    return Expression<
+        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>,
+        typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
+    >(
+        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>(
+            wrapper.expression, PositionalArgExpr()
         )
     );
 }
 
-template<class TLeft, class TConstant>
-// TODO: Work out a method of incrementing transition objects
-Expression1<BinaryExpression<
-    typename TLeft::expression_type,
-    Constant<TConstant>
-// TODO: Again how do we handle return types?
->, int, int>
-operator +(const TLeft left, const TConstant right){
-    return Expression1<BinaryExpression<
-        typename TLeft::expression_type,
-        Constant<TConstant>
-    >, int, int>(
-        BinaryExpression<
-            typename TLeft::expression_type,
-            Constant<TConstant>
-        >(
-            left.expression,
-            Constant<TConstant>(right)
+template<typename TWrapper, typename TConstant>
+Expression<
+    BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>,
+    typename TWrapper::function_type
+>
+operator +(const TWrapper& wrapper, const TConstant& constant){
+    return Expression<
+        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>,
+        typename TWrapper::function_type
+    >(
+        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>(
+            wrapper.expression, ConstantExpr<TConstant>(constant)
         )
     );
 }
 
+template<typename TWrapper>
+Expression<
+    BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>,
+    typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
+>
+operator *(const TWrapper& wrapper, const PlaceholderPositional&){
+    return Expression<
+        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>,
+        typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
+    >(
+        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>(
+            wrapper.expression, PositionalArgExpr()
+        )
+    );
+}
 
-
+template<typename TWrapper, typename TConstant>
+Expression<
+    BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>,
+    typename TWrapper::function_type
+>
+operator *(const TWrapper& wrapper, const TConstant& constant){
+    return Expression<
+        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>,
+        typename TWrapper::function_type
+    >(
+        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>(
+            wrapper.expression, ConstantExpr<TConstant>(constant)
+        )
+    );
+}
 }} // namespace functionalcpp::lambda_expression
 
 #endif // FUNCTIONALCPP__LAMBDA_EXPRESSION__HPP

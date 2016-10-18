@@ -13,15 +13,15 @@ struct tuple0{
     static const size_t length = 0;
 };
 
-template<int n> struct get{};
+template<int n, typename TTuple> struct get{};
 
 /* [[[cog
 import cog
 
 get = """
-template<> struct get<{0}>{{
-    template<typename TTuple>
-    static typename TTuple::v{0}_type from(const TTuple& tuple){{
+template<typename TTuple> struct get<{0}, TTuple>{{
+    typedef typename TTuple::v{0}_type type;
+    static type value(const TTuple& tuple){{
         return tuple.v{0};
     }}
 }};
@@ -77,114 +77,114 @@ cog.out("};")
 
 ]]]*/
 
-template<> struct get<0>{
-    template<typename TTuple>
-    static typename TTuple::v0_type from(const TTuple& tuple){
+template<typename TTuple> struct get<0, TTuple>{
+    typedef typename TTuple::v0_type type;
+    static type value(const TTuple& tuple){
         return tuple.v0;
     }
 };
 
-template<> struct get<1>{
-    template<typename TTuple>
-    static typename TTuple::v1_type from(const TTuple& tuple){
+template<typename TTuple> struct get<1, TTuple>{
+    typedef typename TTuple::v1_type type;
+    static type value(const TTuple& tuple){
         return tuple.v1;
     }
 };
 
-template<> struct get<2>{
-    template<typename TTuple>
-    static typename TTuple::v2_type from(const TTuple& tuple){
+template<typename TTuple> struct get<2, TTuple>{
+    typedef typename TTuple::v2_type type;
+    static type value(const TTuple& tuple){
         return tuple.v2;
     }
 };
 
-template<> struct get<3>{
-    template<typename TTuple>
-    static typename TTuple::v3_type from(const TTuple& tuple){
+template<typename TTuple> struct get<3, TTuple>{
+    typedef typename TTuple::v3_type type;
+    static type value(const TTuple& tuple){
         return tuple.v3;
     }
 };
 
-template<> struct get<4>{
-    template<typename TTuple>
-    static typename TTuple::v4_type from(const TTuple& tuple){
+template<typename TTuple> struct get<4, TTuple>{
+    typedef typename TTuple::v4_type type;
+    static type value(const TTuple& tuple){
         return tuple.v4;
     }
 };
 
-template<> struct get<5>{
-    template<typename TTuple>
-    static typename TTuple::v5_type from(const TTuple& tuple){
+template<typename TTuple> struct get<5, TTuple>{
+    typedef typename TTuple::v5_type type;
+    static type value(const TTuple& tuple){
         return tuple.v5;
     }
 };
 
-template<> struct get<6>{
-    template<typename TTuple>
-    static typename TTuple::v6_type from(const TTuple& tuple){
+template<typename TTuple> struct get<6, TTuple>{
+    typedef typename TTuple::v6_type type;
+    static type value(const TTuple& tuple){
         return tuple.v6;
     }
 };
 
-template<> struct get<7>{
-    template<typename TTuple>
-    static typename TTuple::v7_type from(const TTuple& tuple){
+template<typename TTuple> struct get<7, TTuple>{
+    typedef typename TTuple::v7_type type;
+    static type value(const TTuple& tuple){
         return tuple.v7;
     }
 };
 
-template<> struct get<8>{
-    template<typename TTuple>
-    static typename TTuple::v8_type from(const TTuple& tuple){
+template<typename TTuple> struct get<8, TTuple>{
+    typedef typename TTuple::v8_type type;
+    static type value(const TTuple& tuple){
         return tuple.v8;
     }
 };
 
-template<> struct get<9>{
-    template<typename TTuple>
-    static typename TTuple::v9_type from(const TTuple& tuple){
+template<typename TTuple> struct get<9, TTuple>{
+    typedef typename TTuple::v9_type type;
+    static type value(const TTuple& tuple){
         return tuple.v9;
     }
 };
 
-template<> struct get<10>{
-    template<typename TTuple>
-    static typename TTuple::v10_type from(const TTuple& tuple){
+template<typename TTuple> struct get<10, TTuple>{
+    typedef typename TTuple::v10_type type;
+    static type value(const TTuple& tuple){
         return tuple.v10;
     }
 };
 
-template<> struct get<11>{
-    template<typename TTuple>
-    static typename TTuple::v11_type from(const TTuple& tuple){
+template<typename TTuple> struct get<11, TTuple>{
+    typedef typename TTuple::v11_type type;
+    static type value(const TTuple& tuple){
         return tuple.v11;
     }
 };
 
-template<> struct get<12>{
-    template<typename TTuple>
-    static typename TTuple::v12_type from(const TTuple& tuple){
+template<typename TTuple> struct get<12, TTuple>{
+    typedef typename TTuple::v12_type type;
+    static type value(const TTuple& tuple){
         return tuple.v12;
     }
 };
 
-template<> struct get<13>{
-    template<typename TTuple>
-    static typename TTuple::v13_type from(const TTuple& tuple){
+template<typename TTuple> struct get<13, TTuple>{
+    typedef typename TTuple::v13_type type;
+    static type value(const TTuple& tuple){
         return tuple.v13;
     }
 };
 
-template<> struct get<14>{
-    template<typename TTuple>
-    static typename TTuple::v14_type from(const TTuple& tuple){
+template<typename TTuple> struct get<14, TTuple>{
+    typedef typename TTuple::v14_type type;
+    static type value(const TTuple& tuple){
         return tuple.v14;
     }
 };
 
-template<> struct get<15>{
-    template<typename TTuple>
-    static typename TTuple::v15_type from(const TTuple& tuple){
+template<typename TTuple> struct get<15, TTuple>{
+    typedef typename TTuple::v15_type type;
+    static type value(const TTuple& tuple){
         return tuple.v15;
     }
 };

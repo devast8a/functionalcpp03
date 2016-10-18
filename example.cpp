@@ -8,12 +8,17 @@
 using namespace functionalcpp::placeholder;
 using namespace functionalcpp::lambda_expression;
 
-template<class T> int myfunc(T f){
-    return f(0x44, 0x22);
+template<class T> void myfunc(T f){
+    std::cout << f(10, 20, 30, 40, 50, 60) << std::endl;
+}
+
+template<class T> void myfunc2(T f){
+    std::cout << f(10, 20) << std::endl;
 }
 
 int main(){
-    std::cout << myfunc(lambda/ _ + _) << std::endl;
+    myfunc(lambda/ _ + _ + _ + _ + _ + _);
+    myfunc2(lambda/ _ * 30 + 1 + _);
 }
 
 // Expression<ExpressionTree, ParameterVector>
