@@ -9,16 +9,12 @@ using namespace functionalcpp::placeholder;
 using namespace functionalcpp::lambda_expression;
 
 template<class T> void myfunc(T f){
-    std::cout << f(10, 20, 30, 40, 50, 60) << std::endl;
-}
-
-template<class T> void myfunc2(T f){
-    std::cout << f(10, 20) << std::endl;
+    std::cout << f(true, 1, 100) << std::endl;
+    std::cout << f(false, 1, 100) << std::endl;
 }
 
 int main(){
-    myfunc(lambda/ _ + _ + _ + _ + _ + _);
-    myfunc2(lambda/ _ * 30 + 1 + _);
+    myfunc(lambda/ IF(_, _, _) + 50);
 }
 
 // Expression<ExpressionTree, ParameterVector>

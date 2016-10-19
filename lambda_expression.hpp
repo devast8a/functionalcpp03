@@ -140,6 +140,47 @@ operator /(LambdaKeyword, const TConstant& constant){
     );
 }
 
+
+template<typename TCondition, typename TTrueBranch, typename TFalseBranch> struct IfExpr{
+    static const size_t positional_args = 
+        TCondition::positional_args +
+        TTrueBranch::positional_args +
+        TFalseBranch::positional_args;
+
+    TCondition condition;
+    TTrueBranch true_branch;
+    TFalseBranch false_branch;
+
+    IfExpr(
+        TCondition condition,
+        TTrueBranch true_branch,
+        TFalseBranch false_branch
+    ) : condition(condition), true_branch(true_branch), false_branch(false_branch){}
+
+    template<size_t N, typename TArgs> int evaluate(const TArgs& args) const{
+        if(condition.template evaluate<N, TArgs>(args)){
+            return true_branch.template evaluate<N + TCondition::positional_args, TArgs>(args);
+        }else{
+            return false_branch.template evaluate<N + TCondition::positional_args + TTrueBranch::positional_args, TArgs>(args);
+        }
+    }
+};
+
+Expression<
+    IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>,
+    FuncSig3<int, int, int, int>
+>
+IF(const PlaceholderPositional&, const PlaceholderPositional&, const PlaceholderPositional&){
+    return Expression<
+        IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>,
+        FuncSig3<int, int, int, int>
+    >(
+        IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>(
+            PositionalArgExpr(), PositionalArgExpr(), PositionalArgExpr()
+        )
+    );
+}
+
 // Other operators /////////////////////////////////////////////////////////////
 template<typename TWrapper>
 Expression<
