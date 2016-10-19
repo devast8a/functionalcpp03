@@ -62,7 +62,7 @@ template<typename TLeft, typename TRight, typename TOperator> struct BinaryExpr{
         left(left), right(right){}
 
     template<size_t N, typename TArgs> int evaluate(const TArgs& args) const{
-        binary_operator<TOperator, any, int, int>::evaluate(
+        return binary_operator<TOperator, any, int, int>::evaluate(
             left.template evaluate<N, TArgs>(args),
             right.template evaluate<N + TLeft::positional_args, TArgs>(args)
         );
