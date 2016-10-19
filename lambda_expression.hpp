@@ -120,6 +120,12 @@ operator /(LambdaKeyword, const PlaceholderPositional&){
     );
 }
 
+template<typename TExpression, typename TFunc>
+Expression<TExpression, TFunc>
+operator /(LambdaKeyword, const Expression<TExpression, TFunc>& rhs){
+    return rhs;
+}
+
 template<typename TConstant>
 Expression<
     ConstantExpr<TConstant>,
