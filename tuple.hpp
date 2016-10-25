@@ -9,10 +9,6 @@
  */
 namespace functionalcpp { namespace tupleNS {
 
-struct tuple0{
-    static const size_t length = 0;
-};
-
 template<int n, typename TTuple> struct get{};
 
 /* [[[cog
@@ -35,6 +31,7 @@ template<{1}> struct tuple{0}{{
     tuple{0}({3}):
     {4}
     {{}};
+    {5}
 }};
 """
 
@@ -46,14 +43,34 @@ for i in range(0, 16):
 def List(start, end, string, joiner=","):
     return joiner.join(string.format(i) for i in range(start, end))
 
-for i in range(1, 17):
+for i in range(16, 0, -1):
+    if i == 16:
+        v = ""
+    else:
+        v = """
+        template<typename TNext> struct push{{
+            typedef tuple{0}<{1}, TNext> type;
+        }};"""
+        v = v.format(i + 1, List(0, i, "T{0}"))
+
     cog.out(tuple.format(
         i,
         List(0, i, "typename T{0}"),
         List(0, i, "typedef T{0} v{0}_type; const T{0} v{0};", "\n    "),
         List(0, i, "const T{0} v{0}"),
-        List(0, i, "v{0}(v{0})")
+        List(0, i, "v{0}(v{0})"),
+        v,
     ))
+
+cog.out("""
+struct tuple0
+{
+    static const size_t length = 0;
+    template<typename TNext> struct push{
+        typedef tuple1<TNext> type;
+    };
+};
+""")
 
 cog.out("""
 struct tuple{
@@ -189,203 +206,8 @@ template<typename TTuple> struct get<15, TTuple>{
     }
 };
 
-template<typename T0> struct tuple1{
-    static const size_t length = 1;
-
-    typedef T0 v0_type; const T0 v0;
-    tuple1(const T0 v0):
-    v0(v0)
-    {};
-};
-
-template<typename T0,typename T1> struct tuple2{
-    static const size_t length = 2;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    tuple2(const T0 v0,const T1 v1):
-    v0(v0),v1(v1)
-    {};
-};
-
-template<typename T0,typename T1,typename T2> struct tuple3{
-    static const size_t length = 3;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    tuple3(const T0 v0,const T1 v1,const T2 v2):
-    v0(v0),v1(v1),v2(v2)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3> struct tuple4{
-    static const size_t length = 4;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    tuple4(const T0 v0,const T1 v1,const T2 v2,const T3 v3):
-    v0(v0),v1(v1),v2(v2),v3(v3)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4> struct tuple5{
-    static const size_t length = 5;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    tuple5(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5> struct tuple6{
-    static const size_t length = 6;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    tuple6(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6> struct tuple7{
-    static const size_t length = 7;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    tuple7(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7> struct tuple8{
-    static const size_t length = 8;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    tuple8(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8> struct tuple9{
-    static const size_t length = 9;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    typedef T8 v8_type; const T8 v8;
-    tuple9(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9> struct tuple10{
-    static const size_t length = 10;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    typedef T8 v8_type; const T8 v8;
-    typedef T9 v9_type; const T9 v9;
-    tuple10(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10> struct tuple11{
-    static const size_t length = 11;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    typedef T8 v8_type; const T8 v8;
-    typedef T9 v9_type; const T9 v9;
-    typedef T10 v10_type; const T10 v10;
-    tuple11(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11> struct tuple12{
-    static const size_t length = 12;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    typedef T8 v8_type; const T8 v8;
-    typedef T9 v9_type; const T9 v9;
-    typedef T10 v10_type; const T10 v10;
-    typedef T11 v11_type; const T11 v11;
-    tuple12(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12> struct tuple13{
-    static const size_t length = 13;
-
-    typedef T0 v0_type; const T0 v0;
-    typedef T1 v1_type; const T1 v1;
-    typedef T2 v2_type; const T2 v2;
-    typedef T3 v3_type; const T3 v3;
-    typedef T4 v4_type; const T4 v4;
-    typedef T5 v5_type; const T5 v5;
-    typedef T6 v6_type; const T6 v6;
-    typedef T7 v7_type; const T7 v7;
-    typedef T8 v8_type; const T8 v8;
-    typedef T9 v9_type; const T9 v9;
-    typedef T10 v10_type; const T10 v10;
-    typedef T11 v11_type; const T11 v11;
-    typedef T12 v12_type; const T12 v12;
-    tuple13(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12)
-    {};
-};
-
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12,typename T13> struct tuple14{
-    static const size_t length = 14;
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12,typename T13,typename T14,typename T15> struct tuple16{
+    static const size_t length = 16;
 
     typedef T0 v0_type; const T0 v0;
     typedef T1 v1_type; const T1 v1;
@@ -401,9 +223,12 @@ template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5
     typedef T11 v11_type; const T11 v11;
     typedef T12 v12_type; const T12 v12;
     typedef T13 v13_type; const T13 v13;
-    tuple14(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12,const T13 v13):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12),v13(v13)
+    typedef T14 v14_type; const T14 v14;
+    typedef T15 v15_type; const T15 v15;
+    tuple16(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12,const T13 v13,const T14 v14,const T15 v15):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12),v13(v13),v14(v14),v15(v15)
     {};
+    
 };
 
 template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12,typename T13,typename T14> struct tuple15{
@@ -427,10 +252,14 @@ template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5
     tuple15(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12,const T13 v13,const T14 v14):
     v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12),v13(v13),v14(v14)
     {};
+    
+        template<typename TNext> struct push{
+            typedef tuple16<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14, TNext> type;
+        };
 };
 
-template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12,typename T13,typename T14,typename T15> struct tuple16{
-    static const size_t length = 16;
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12,typename T13> struct tuple14{
+    static const size_t length = 14;
 
     typedef T0 v0_type; const T0 v0;
     typedef T1 v1_type; const T1 v1;
@@ -446,11 +275,268 @@ template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5
     typedef T11 v11_type; const T11 v11;
     typedef T12 v12_type; const T12 v12;
     typedef T13 v13_type; const T13 v13;
-    typedef T14 v14_type; const T14 v14;
-    typedef T15 v15_type; const T15 v15;
-    tuple16(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12,const T13 v13,const T14 v14,const T15 v15):
-    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12),v13(v13),v14(v14),v15(v15)
+    tuple14(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12,const T13 v13):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12),v13(v13)
     {};
+    
+        template<typename TNext> struct push{
+            typedef tuple15<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11,typename T12> struct tuple13{
+    static const size_t length = 13;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    typedef T8 v8_type; const T8 v8;
+    typedef T9 v9_type; const T9 v9;
+    typedef T10 v10_type; const T10 v10;
+    typedef T11 v11_type; const T11 v11;
+    typedef T12 v12_type; const T12 v12;
+    tuple13(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11,const T12 v12):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11),v12(v12)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple14<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11> struct tuple12{
+    static const size_t length = 12;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    typedef T8 v8_type; const T8 v8;
+    typedef T9 v9_type; const T9 v9;
+    typedef T10 v10_type; const T10 v10;
+    typedef T11 v11_type; const T11 v11;
+    tuple12(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10,const T11 v11):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10),v11(v11)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple13<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9,typename T10> struct tuple11{
+    static const size_t length = 11;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    typedef T8 v8_type; const T8 v8;
+    typedef T9 v9_type; const T9 v9;
+    typedef T10 v10_type; const T10 v10;
+    tuple11(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9,const T10 v10):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9),v10(v10)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple12<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8,typename T9> struct tuple10{
+    static const size_t length = 10;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    typedef T8 v8_type; const T8 v8;
+    typedef T9 v9_type; const T9 v9;
+    tuple10(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8,const T9 v9):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8),v9(v9)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple11<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7,typename T8> struct tuple9{
+    static const size_t length = 9;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    typedef T8 v8_type; const T8 v8;
+    tuple9(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7,const T8 v8):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7),v8(v8)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple10<T0,T1,T2,T3,T4,T5,T6,T7,T8, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,typename T7> struct tuple8{
+    static const size_t length = 8;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    typedef T7 v7_type; const T7 v7;
+    tuple8(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6,const T7 v7):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6),v7(v7)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple9<T0,T1,T2,T3,T4,T5,T6,T7, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6> struct tuple7{
+    static const size_t length = 7;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    typedef T6 v6_type; const T6 v6;
+    tuple7(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5,const T6 v6):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5),v6(v6)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple8<T0,T1,T2,T3,T4,T5,T6, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4,typename T5> struct tuple6{
+    static const size_t length = 6;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    typedef T5 v5_type; const T5 v5;
+    tuple6(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4,const T5 v5):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4),v5(v5)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple7<T0,T1,T2,T3,T4,T5, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3,typename T4> struct tuple5{
+    static const size_t length = 5;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    typedef T4 v4_type; const T4 v4;
+    tuple5(const T0 v0,const T1 v1,const T2 v2,const T3 v3,const T4 v4):
+    v0(v0),v1(v1),v2(v2),v3(v3),v4(v4)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple6<T0,T1,T2,T3,T4, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2,typename T3> struct tuple4{
+    static const size_t length = 4;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    typedef T3 v3_type; const T3 v3;
+    tuple4(const T0 v0,const T1 v1,const T2 v2,const T3 v3):
+    v0(v0),v1(v1),v2(v2),v3(v3)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple5<T0,T1,T2,T3, TNext> type;
+        };
+};
+
+template<typename T0,typename T1,typename T2> struct tuple3{
+    static const size_t length = 3;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    typedef T2 v2_type; const T2 v2;
+    tuple3(const T0 v0,const T1 v1,const T2 v2):
+    v0(v0),v1(v1),v2(v2)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple4<T0,T1,T2, TNext> type;
+        };
+};
+
+template<typename T0,typename T1> struct tuple2{
+    static const size_t length = 2;
+
+    typedef T0 v0_type; const T0 v0;
+    typedef T1 v1_type; const T1 v1;
+    tuple2(const T0 v0,const T1 v1):
+    v0(v0),v1(v1)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple3<T0,T1, TNext> type;
+        };
+};
+
+template<typename T0> struct tuple1{
+    static const size_t length = 1;
+
+    typedef T0 v0_type; const T0 v0;
+    tuple1(const T0 v0):
+    v0(v0)
+    {};
+    
+        template<typename TNext> struct push{
+            typedef tuple2<T0, TNext> type;
+        };
+};
+
+struct tuple0
+{
+    static const size_t length = 0;
+    template<typename TNext> struct push{
+        typedef tuple1<TNext> type;
+    };
 };
 
 struct tuple{
