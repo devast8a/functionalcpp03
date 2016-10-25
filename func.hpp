@@ -10,6 +10,19 @@ using namespace functionalcpp::tupleNS;
 
 template<typename T0, size_t T0Count, typename T1, size_t T1Count> struct FuncSigMergeImpl{};
 
+
+template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 0, T1, 0>{
+    typedef T0 type;
+};
+
+template<typename T0, size_t T0Count, typename T1> struct FuncSigMergeImpl<T0, T0Count, T1, 0>{
+    typedef T0 type;
+};
+
+template<typename T0, typename T1, size_t T1Count> struct FuncSigMergeImpl<T0, 0, T1, T1Count>{
+    typedef T1 type;
+};
+
 template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 1, T1, 1>{
     typedef FuncSig2<
         typename T0::return_type,
@@ -67,6 +80,93 @@ template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 5, T1, 1>{
 
 template<typename T0, typename T1> struct FuncSigMerge{
     typedef typename FuncSigMergeImpl<T0, T0::parameter_count, T1, T1::parameter_count>::type type;
+};
+
+
+
+/*
+ * The DFunc1 function that should be called
+ * You shouldn't really ever need to use this or inherit this
+ *
+ * Instead use DFunc1Adapter and write a TFunc that supports both
+ * Func and DFunc automagically.
+ */
+template<typename TR, typename T0> struct DFunc1Impl{
+    virtual TR apply(const T0& a0) = 0;
+};
+
+/*
+ * An adapter for TFunc types that are normally passed into Func's
+ * to convert them to DFunc's.
+ */
+template<typename TFunc, typename TR, typename T0> struct DFunc1Adapter : DFunc1Impl<TR, T0>{
+    TFunc func;
+
+    DFunc1Adapter(TFunc func) : func(func){}
+
+    inline TR apply(const T0& a0){
+        return func.apply(a0);
+    }
+};
+
+/*
+ * If you would like to use functions as a variable, this class is probably the
+ * one to use. There is some indirection cost.
+ * Currently we also leak memory. It's trivial to solve, simply investigating
+ * methods that allow for this to become zero cost first.
+ *
+ * TODO: Try to reduce indirection cost
+ * TODO: Stop leaking memory please
+ */
+template<typename TR, typename T0> struct DFunc1{
+    DFunc1Impl<TR, T0>* func;
+
+    inline TR operator()(const T0& a0){
+        return func->apply(a0);
+    }
+
+    DFunc1(DFunc1Impl<TR, T0>* func) : func(func){}
+};
+
+/*
+ * Core function class
+ *
+ * Don't inherit from this class directly. Use a function signature and selector
+ * Use this class for declaring typesafe arguments
+ * It's probably a pain to use this class as the type of a variable, see DFunc instead
+ *
+ * Wraps an instance of TFunc, calling its apply method
+ * Reason we wrap an instance of TFunc instead of having TFunc use CRTP,
+ * is that we can use Func1 as an interface for declaring typesafe functional
+ * objects that the compiler can optimize to zero cost.
+ *
+ * Assuming you follow some rules. (In both Func and TFunc)
+ * No virtual members
+ * No copy constructor
+ *
+ * There may be more rules you need to follow, you may not even need to follow
+ * those rules, in my experienece they must be followed.
+ */
+template<typename TFunc, typename TR, typename T0> struct Func1{
+    static const size_t parameter_count = 1;
+    static const bool has_return_value = true;
+    typedef TR return_type;
+    typedef T0 parameter0_type;
+
+    typedef TFunc function_type;
+    TFunc function;
+
+    Func1(TFunc function) : function(function){}
+
+    inline TR operator()(const T0& a0){
+        return function.apply(a0);
+    }
+
+    operator DFunc1<TR, T0>(){
+        return DFunc1<TR, T0>(
+            new DFunc1Adapter<TFunc, TR, T0>(function)
+        );
+    }
 };
 
 /* [[[cog
@@ -149,18 +249,6 @@ cog.out("};")
         TR operator()(){
             TSelf& self = *static_cast<TSelf*>(this);
             return self.apply();
-        }
-    };
-    
-    template<typename TSelf, typename TR, typename T0> struct Func1{
-        static const size_t parameter_count = 1;
-        static const bool has_return_value = true;
-        typedef TR return_type;
-        typedef T0 parameter0_type;
-        
-        TR operator()(const T0& a0){
-            TSelf& self = *static_cast<TSelf*>(this);
-            return self.apply(a0);
         }
     };
     
