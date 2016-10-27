@@ -1,37 +1,33 @@
 #ifndef FUNCTIONALCPP__FUNCTION_POINTER__HPP
 #define FUNCTIONALCPP__FUNCTION_POINTER__HPP
 
+#include "func.hpp"
+
 namespace functionalcpp { namespace function_pointer {
+using namespace functionalcpp::function;
 
-/**
- * Wraps a function pointer as a Func object
- */
-template<typename TR> struct FuncPointer0 :
-    FuncImpl0<FuncPointer0<TR>, TR>
-{
-    TR(*const function_pointer)();
+template<typename TR, typename T0> struct func_pointer1{
+    typedef TR(*function_type)(T0);
 
-    FuncPointer0(TR(*fp)()) : function_pointer(fp){}
+    function_type function_pointer;
 
-    TR evaluate() const{
-        return function_pointer();
+    func_pointer1(function_type fp) : function_pointer(fp){}
+
+    TR apply(T0 v0){
+        return function_pointer(v0);
     }
 };
 
-/**
- * @see FuncPointer0
- */
-template<typename TR, typename T1> struct FuncPointer1 :
-    FuncImpl1<FuncPointer1<TR, T1>, TR, T1>
+template<typename T>
+struct function : Func1<T, int, int>
 {
-    TR(*const function_pointer)(T1);
-
-    FuncPointer1(TR(*fp)(T1)) : function_pointer(fp){}
-
-    TR evaluate(T1 arg1) const{
-        return function_pointer(arg1);
-    }
+    function(Func1<T, int, int> func) : Func1<T, int, int>(func){}
 };
+
+template<typename T>
+function<T> mkfunction(T func){
+    return function<T>(func);
+}
 
 /**
  * Convert from a Function Pointer to a Func.
@@ -49,12 +45,12 @@ template<typename TR, typename T1> struct FuncPointer1 :
  * @see Func0<T> for more information regarding Func classes
  * @see FuncPointer0<T> for information regarding function pointer adaption
  */
-template<typename TR> FuncPointer0<TR> fp(TR(*fp)()){
-    return FuncPointer0<TR>(fp);
-}
-
-template<typename TR, typename T1> FuncPointer1<TR,T1> fp(TR(*fp)(T1)){
-    return FuncPointer1<TR, T1>(fp);
+template<typename TR, typename T0>
+function<func_pointer1<TR, T0> >
+fp(TR(*fp)(T0)){
+    return mkfunction(
+        func_pointer1<TR, T0>(fp)
+    );
 }
 
 }} // namespace functionalcpp::function_pointer

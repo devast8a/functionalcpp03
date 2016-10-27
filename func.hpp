@@ -3,86 +3,7 @@
 #include "tuple.hpp"
 
 namespace functionalcpp { namespace function {
-
-#include "func_sig.hpp"
-
-using namespace functionalcpp::tupleNS;
-
-template<typename T0, size_t T0Count, typename T1, size_t T1Count> struct FuncSigMergeImpl{};
-
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 0, T1, 0>{
-    typedef T0 type;
-};
-
-template<typename T0, size_t T0Count, typename T1> struct FuncSigMergeImpl<T0, T0Count, T1, 0>{
-    typedef T0 type;
-};
-
-template<typename T0, typename T1, size_t T1Count> struct FuncSigMergeImpl<T0, 0, T1, T1Count>{
-    typedef T1 type;
-};
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 1, T1, 1>{
-    typedef FuncSig2<
-        typename T0::return_type,
-        typename T0::parameter0_type,
-        // T1
-        typename T1::parameter0_type
-    > type;
-};
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 2, T1, 1>{
-    typedef FuncSig3<
-        typename T0::return_type,
-        typename T0::parameter0_type,
-        typename T0::parameter1_type,
-        // T1
-        typename T1::parameter0_type
-    > type;
-};
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 3, T1, 1>{
-    typedef FuncSig4<
-        typename T0::return_type,
-        typename T0::parameter0_type,
-        typename T0::parameter1_type,
-        typename T0::parameter2_type,
-        // T1
-        typename T1::parameter0_type
-    > type;
-};
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 4, T1, 1>{
-    typedef FuncSig5<
-        typename T0::return_type,
-        typename T0::parameter0_type,
-        typename T0::parameter1_type,
-        typename T0::parameter2_type,
-        typename T0::parameter3_type,
-        // T1
-        typename T1::parameter0_type
-    > type;
-};
-
-template<typename T0, typename T1> struct FuncSigMergeImpl<T0, 5, T1, 1>{
-    typedef FuncSig6<
-        typename T0::return_type,
-        typename T0::parameter0_type,
-        typename T0::parameter1_type,
-        typename T0::parameter2_type,
-        typename T0::parameter3_type,
-        typename T0::parameter4_type,
-        // T1
-        typename T1::parameter0_type
-    > type;
-};
-
-template<typename T0, typename T1> struct FuncSigMerge{
-    typedef typename FuncSigMergeImpl<T0, T0::parameter_count, T1, T1::parameter_count>::type type;
-};
-
-
+using namespace functionalcpp::tuples;
 
 /*
  * The DFunc1 function that should be called
@@ -119,13 +40,13 @@ template<typename TFunc, typename TR, typename T0> struct DFunc1Adapter : DFunc1
  * TODO: Stop leaking memory please
  */
 template<typename TR, typename T0> struct DFunc1{
-    DFunc1Impl<TR, T0>* func;
+    DFunc1Impl<TR, T0>& func;
 
     inline TR operator()(const T0& a0){
-        return func->apply(a0);
+        return func.apply(a0);
     }
 
-    DFunc1(DFunc1Impl<TR, T0>* func) : func(func){}
+    DFunc1(DFunc1Impl<TR, T0>& func) : func(func){}
 };
 
 /*
@@ -164,7 +85,7 @@ template<typename TFunc, typename TR, typename T0> struct Func1{
 
     operator DFunc1<TR, T0>(){
         return DFunc1<TR, T0>(
-            new DFunc1Adapter<TFunc, TR, T0>(function)
+            *new DFunc1Adapter<TFunc, TR, T0>(function)
         );
     }
 };
@@ -215,7 +136,7 @@ template<typename TSelf, typename TFunc> struct FuncN :
     typename TFunc::return_type apply(){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple0>(
-            tuple::create()
+            create()
         );
     }
 
@@ -226,7 +147,7 @@ for i in range(1, 17):
     template<{0}> typename TFunc::return_type apply({1}){{
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple{2}<{3}> >(
-            tuple::create({4})
+            create({4})
         );
     }}
     """.format(
@@ -626,7 +547,7 @@ template<typename TSelf, typename TFunc> struct FuncN :
     typename TFunc::return_type apply(){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple0>(
-            tuple::create()
+            create()
         );
     }
 
@@ -634,112 +555,112 @@ template<typename TSelf, typename TFunc> struct FuncN :
     template<typename T0> typename TFunc::return_type apply(const T0& a0){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple1<T0> >(
-            tuple::create(a0)
+            create(a0)
         );
     }
     
     template<typename T0, typename T1> typename TFunc::return_type apply(const T0& a0, const T1& a1){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple2<T0, T1> >(
-            tuple::create(a0, a1)
+            create(a0, a1)
         );
     }
     
     template<typename T0, typename T1, typename T2> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple3<T0, T1, T2> >(
-            tuple::create(a0, a1, a2)
+            create(a0, a1, a2)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple4<T0, T1, T2, T3> >(
-            tuple::create(a0, a1, a2, a3)
+            create(a0, a1, a2, a3)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple5<T0, T1, T2, T3, T4> >(
-            tuple::create(a0, a1, a2, a3, a4)
+            create(a0, a1, a2, a3, a4)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple6<T0, T1, T2, T3, T4, T5> >(
-            tuple::create(a0, a1, a2, a3, a4, a5)
+            create(a0, a1, a2, a3, a4, a5)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple7<T0, T1, T2, T3, T4, T5, T6> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6)
+            create(a0, a1, a2, a3, a4, a5, a6)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple8<T0, T1, T2, T3, T4, T5, T6, T7> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7)
+            create(a0, a1, a2, a3, a4, a5, a6, a7)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple9<T0, T1, T2, T3, T4, T5, T6, T7, T8> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple13<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple14<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13, typename T14> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple15<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14)
         );
     }
     
     template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13, typename T14, typename T15> typename TFunc::return_type apply(const T0& a0, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15){
         TSelf& self = *static_cast<TSelf*>(this);
         return self.template apply_tuple<typename TFunc::return_type, tuple16<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >(
-            tuple::create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
+            create(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15)
         );
     }
     };
