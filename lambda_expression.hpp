@@ -10,7 +10,7 @@
 namespace functionalcpp{ namespace lambda_expression {
 
 using namespace functionalcpp::function;
-using namespace functionalcpp::tupleNS;
+using namespace functionalcpp::tuples;
 using namespace functionalcpp::placeholder;
 using namespace functionalcpp::operators;
 
