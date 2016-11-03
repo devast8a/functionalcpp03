@@ -21,8 +21,7 @@ template<int n, typename TSig> struct get{};
 for i in [0..MAX_SIGNATURE_SIZE]
     out """
         template<typename TSig> struct get<{0}, TSig>{
-            typedef typename TSig::v{0}_type type;
-            static type value(const TSig& fsig){return fsig.v{0};}
+            typedef typename TSig::parameter{0}_type type;
         };
         """,
         i
