@@ -7,7 +7,7 @@ out """
 #ifndef FUNCTIONALCPP__FUNCTIONS__HPP
 #define FUNCTIONALCPP__FUNCTIONS__HPP
 
-#include "traits.hpp"
+#include "tmp.hpp"
 
 struct #{def}{};
 namespace functionalcpp { namespace functions {
@@ -20,7 +20,7 @@ for i in [MAX_LENGTH..0]
         struct signature{1}
         {
             static const size_t parameters = {2};
-            static const bool returns_value = traits::is_not_void<TR>::value;
+            static const bool returns_value = tmp::not_void<TR>::value;
             typedef TR return_type;
             {3}
         };
@@ -60,12 +60,12 @@ for i in [MAX_LENGTH..0]
         template<typename TCallable, typename TR{0}>
         struct dfunction_body_adatper{1} : dfunction_body<TR{2}>
         {
-            TCallable func;
+            TCallable callable;
 
-            dfunction_body_adatper(TCallable func) : func(func){}
+            dfunction_body_adatper(TCallable callable) : callable(callable){}
 
             inline TR apply({3}){
-                return func({4});
+                return callable.apply({4});
             }
         };
 
@@ -120,7 +120,7 @@ for i in [MAX_LENGTH..0]
             function(TCallable callable) : callable(callable){}
 
             inline TR operator()({3}){
-                return callable({4});
+                return callable.apply({4});
             }
 
             inline operator dfunction<TR{2}>(){

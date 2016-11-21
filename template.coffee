@@ -18,7 +18,12 @@ global.format = (fmt, args...)->
         if /^\s+$/.test start
             indent = start
 
-        start + (args[parseInt pos] ? "")
+        pos = parseInt pos
+
+        if pos >= args.length
+            throw "Out of range!"
+
+        start + (args[pos] ? "")
             .toString()
             .replace /\n/g, "\n" + indent
 

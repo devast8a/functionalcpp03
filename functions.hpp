@@ -1,7 +1,7 @@
 #ifndef FUNCTIONALCPP__FUNCTIONS__HPP
 #define FUNCTIONALCPP__FUNCTIONS__HPP
 
-#include "traits.hpp"
+#include "tmp.hpp"
 
 struct __{};
 namespace functionalcpp { namespace functions {
@@ -10,7 +10,7 @@ template<typename TR, typename T0=__, typename T1=__, typename T2=__, typename T
 struct signature
 {
     static const size_t parameters = 16;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -33,7 +33,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, __>
 {
     static const size_t parameters = 15;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -55,7 +55,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, __, __>
 {
     static const size_t parameters = 14;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -76,7 +76,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, __, __, __>
 {
     static const size_t parameters = 13;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -96,7 +96,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, __, __, __, __>
 {
     static const size_t parameters = 12;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -115,7 +115,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, __, __, __, __, __>
 {
     static const size_t parameters = 11;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -133,7 +133,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, __, __, __, __, __, __>
 {
     static const size_t parameters = 10;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -150,7 +150,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 9;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -166,7 +166,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 8;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -181,7 +181,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, T6, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 7;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -195,7 +195,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, T5, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 6;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -208,7 +208,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3, typena
 struct signature<TR, T0, T1, T2, T3, T4, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 5;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -220,7 +220,7 @@ template<typename TR, typename T0, typename T1, typename T2, typename T3>
 struct signature<TR, T0, T1, T2, T3, __, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 4;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -231,7 +231,7 @@ template<typename TR, typename T0, typename T1, typename T2>
 struct signature<TR, T0, T1, T2, __, __, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 3;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -241,7 +241,7 @@ template<typename TR, typename T0, typename T1>
 struct signature<TR, T0, T1, __, __, __, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 2;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
     typedef T1 parameter1_type;
@@ -250,7 +250,7 @@ template<typename TR, typename T0>
 struct signature<TR, T0, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 1;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     typedef T0 parameter0_type;
 };
@@ -258,7 +258,7 @@ template<typename TR>
 struct signature<TR, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __>
 {
     static const size_t parameters = 0;
-    static const bool returns_value = traits::is_not_void<TR>::value;
+    static const bool returns_value = tmp::not_void<TR>::value;
     typedef TR return_type;
     
 };
@@ -372,204 +372,204 @@ struct dfunction_body<TR, __, __, __, __, __, __, __, __, __, __, __, __, __, __
 template<typename TCallable, typename TR, typename T0=__, typename T1=__, typename T2=__, typename T3=__, typename T4=__, typename T5=__, typename T6=__, typename T7=__, typename T8=__, typename T9=__, typename T10=__, typename T11=__, typename T12=__, typename T13=__, typename T14=__, typename T15=__>
 struct dfunction_body_adatper : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13, T14 a14, T15 a15){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13, typename T14>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13, T14 a14){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6, T7>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7){
-        return func(a0, a1, a2, a3, a4, a5, a6, a7);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5, T6>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6){
-        return func(a0, a1, a2, a3, a4, a5, a6);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, T5, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4, T5>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5){
-        return func(a0, a1, a2, a3, a4, a5);
+        return callable.apply(a0, a1, a2, a3, a4, a5);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3, typename T4>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, T4, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3, T4>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4){
-        return func(a0, a1, a2, a3, a4);
+        return callable.apply(a0, a1, a2, a3, a4);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2, typename T3>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, T3, __, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2, T3>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2, T3 a3){
-        return func(a0, a1, a2, a3);
+        return callable.apply(a0, a1, a2, a3);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1, typename T2>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, T2, __, __, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1, T2>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1, T2 a2){
-        return func(a0, a1, a2);
+        return callable.apply(a0, a1, a2);
     }
 };
 
 template<typename TCallable, typename TR, typename T0, typename T1>
 struct dfunction_body_adatper<TCallable, TR, T0, T1, __, __, __, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0, T1>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0, T1 a1){
-        return func(a0, a1);
+        return callable.apply(a0, a1);
     }
 };
 
 template<typename TCallable, typename TR, typename T0>
 struct dfunction_body_adatper<TCallable, TR, T0, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR, T0>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(T0 a0){
-        return func(a0);
+        return callable.apply(a0);
     }
 };
 
 template<typename TCallable, typename TR>
 struct dfunction_body_adatper<TCallable, TR, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __> : dfunction_body<TR>
 {
-    TCallable func;
+    TCallable callable;
 
-    dfunction_body_adatper(TCallable func) : func(func){}
+    dfunction_body_adatper(TCallable callable) : callable(callable){}
 
     inline TR apply(){
-        return func();
+        return callable.apply();
     }
 };
 
@@ -824,7 +824,7 @@ struct function : signature<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13, T14 a14, T15 a15){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(){
@@ -843,7 +843,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13, T14 a14){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(){
@@ -862,7 +862,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12, T13 a13){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(){
@@ -881,7 +881,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11, T12 a12){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(){
@@ -900,7 +900,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10, T11 a11){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(){
@@ -919,7 +919,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, __, 
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(){
@@ -938,7 +938,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(){
@@ -957,7 +957,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, T8, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7, a8);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7, T8>(){
@@ -976,7 +976,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, T7, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7){
-        return callable(a0, a1, a2, a3, a4, a5, a6, a7);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6, a7);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6, T7>(){
@@ -995,7 +995,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, T6, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6){
-        return callable(a0, a1, a2, a3, a4, a5, a6);
+        return callable.apply(a0, a1, a2, a3, a4, a5, a6);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5, T6>(){
@@ -1014,7 +1014,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, T5, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5){
-        return callable(a0, a1, a2, a3, a4, a5);
+        return callable.apply(a0, a1, a2, a3, a4, a5);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4, T5>(){
@@ -1033,7 +1033,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, T4, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3, T4 a4){
-        return callable(a0, a1, a2, a3, a4);
+        return callable.apply(a0, a1, a2, a3, a4);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3, T4>(){
@@ -1052,7 +1052,7 @@ struct function<TCallable, TR, T0, T1, T2, T3, __, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2, T3 a3){
-        return callable(a0, a1, a2, a3);
+        return callable.apply(a0, a1, a2, a3);
     }
 
     inline operator dfunction<TR, T0, T1, T2, T3>(){
@@ -1071,7 +1071,7 @@ struct function<TCallable, TR, T0, T1, T2, __, __, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1, T2 a2){
-        return callable(a0, a1, a2);
+        return callable.apply(a0, a1, a2);
     }
 
     inline operator dfunction<TR, T0, T1, T2>(){
@@ -1090,7 +1090,7 @@ struct function<TCallable, TR, T0, T1, __, __, __, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0, T1 a1){
-        return callable(a0, a1);
+        return callable.apply(a0, a1);
     }
 
     inline operator dfunction<TR, T0, T1>(){
@@ -1109,7 +1109,7 @@ struct function<TCallable, TR, T0, __, __, __, __, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(T0 a0){
-        return callable(a0);
+        return callable.apply(a0);
     }
 
     inline operator dfunction<TR, T0>(){
@@ -1128,7 +1128,7 @@ struct function<TCallable, TR, __, __, __, __, __, __, __, __, __, __, __, __, _
     function(TCallable callable) : callable(callable){}
 
     inline TR operator()(){
-        return callable();
+        return callable.apply();
     }
 
     inline operator dfunction<TR>(){
