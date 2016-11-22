@@ -1,250 +1,320 @@
 #ifndef FUNCTIONALCPP__LAMBDA_EXPRESSION__HPP
 #define FUNCTIONALCPP__LAMBDA_EXPRESSION__HPP
 
-#include "func.hpp"
+#include "functions.hpp"
 #include "placeholder.hpp"
 #include "tuple.hpp"
 #include "operators.hpp"
+#include "signature_utils.hpp"
 
 
 namespace functionalcpp{ namespace lambda_expression {
 
-using namespace functionalcpp::function;
-using namespace functionalcpp::tuples;
-using namespace functionalcpp::placeholder;
-using namespace functionalcpp::operators;
+namespace args{
+    /*
+     * Container that holds various things for expression functions
+     *  - Type safe tuple of arguments
+     *  - Current positional argument (Manipulated at compile time)
+     *
+     * You should try to use one of the helper classes/functions in this
+     * namespace before hacking onto/using argcontainer directly.
+     */
+    template<typename TArguments, size_t TPosition>
+    struct argcontainer
+    {
+        argcontainer(TArguments arguments) : arguments(arguments){}
 
-/*******************************************************************************
- * Expression implementations
- * TArgs is a type safe tuple (see tuple), containing the arguments given to the
- * lambda expression when being called.
- *
- * evaluate() is probably the perfect place to work out return value types etc
- *
- * Perhaps we remove all ancillary information from Expressions, like
- * GetArg's TType and N, or BinaryExpression's evaluate return type
- * Then populate this information only when evaluate is called.
- ******************************************************************************/
-template<typename TConstant> struct ConstantExpr{
+        typedef TArguments arguments_type;
+        static const size_t position = TPosition;
+        arguments_type arguments;
+    };
+
+    // position_add ////////////////////////////////////////////////////////////
+
+    /*
+     * Adds to the position field of a given argcontainer
+     *
+     * Used by positional placeholder expressions to determine which argument
+     * a placeholder refers to
+     *
+     * You can use position_add in the following ways.
+     *
+     * Directly add to position
+     *      position_add<3>(args); // adds 3 to position field of args
+     *
+     * Add the number of positional arguments in an expression to the position
+     *      position_add<T>(args); // adds the number of positional arguments
+     *                             // in the expression T to position field
+     *
+     * The type of argcontainer will change, it's best to just directly call
+     * something template function with the new argcontainer.
+     */
+    template<typename TExpression, typename T>
+    argcontainer<
+        typename T::arguments_type,
+        T::position + TExpression::positional_args
+    >
+    position_add(const T& args)
+    {
+        return argcontainer<
+            typename T::arguments_type,
+            T::position + TExpression::positional_args
+        >(
+            args.arguments
+        );
+    };
+
+    /*
+     * @see position_add
+     */
+    template<size_t N, typename T>
+    argcontainer<
+        typename T::arguments_type,
+        T::position + N
+    >
+    position_add(const T& args)
+    {
+        return argcontainer<
+            typename T::arguments_type,
+            T::position + N
+        >(
+            args.arguments
+        );
+    };
+
+    // value ///////////////////////////////////////////////////////////////////
+
+    /*
+     * Returns the value of the Nth argument with type safety
+     * Piggybacks off tuples::get
+     *
+     * args = make(tuples::create('A', 41.5f, 32));
+     * char c = value<0>(args);
+     * char c = value<1>(args);
+     */
+    template<size_t N, typename T>
+    typename tuples::get<N, typename T::arguments_type>::type
+    value(const T& args)
+    {
+        return tuples::get<N, typename T::arguments_type>::value(args.arguments);
+    }
+
+    // get::type ///////////////////////////////////////////////////////////////
+
+    /*
+     * Get the type of the Nth argument
+     * Unlike value, you must explicitly specify the argcontainer type.
+     * Piggybacks off tuples::get
+     */
+    template<size_t N, typename T>
+    struct get{
+        typedef typename tuples::get<N, typename T::arguments_type>::type type;
+
+        static type value(const T& args)
+        {
+            return tuples::get<N, typename T::arguments_type>::value(args.arguments);
+        }
+    };
+
+    // make ////////////////////////////////////////////////////////////////////
+
+    /*
+     * Make a default argcontainer and fill it with a tuple of arguments
+     *
+     * args = make(tuples::create(10, 'h'));
+     */
+    template<typename T>
+    argcontainer<T, 0>
+    make(const T& args){
+        return argcontainer<T, 0>(args);
+    }
+}
+
+template<typename TSelf>
+struct expression_body
+{
+    int apply(){
+        return apply_tuple(
+            tuples::create()
+        );
+    }
+
+    template<typename T0> int apply(T0 a0){
+        return apply_tuple(
+            tuples::create(a0)
+        );
+    }
+
+    template<typename T0, typename T1> int apply(T0 a0, T1 a1){
+        return apply_tuple(
+            tuples::create(a0, a1)
+        );
+    }
+
+    template<typename T0, typename T1, typename T2> int apply(T0 a0, T1 a1, T2 a2){
+        return apply_tuple(
+            tuples::create(a0, a1, a2)
+        );
+    }
+
+    template<typename T0, typename T1, typename T2, typename T3> int apply(T0 a0, T1 a1, T2 a2, T3 a3){
+        return apply_tuple(
+            tuples::create(a0, a1, a2, a3)
+        );
+    }
+
+    template<typename T>
+    int apply_tuple(const T& args){
+        return static_cast<TSelf&>(*this)(
+            args::make(args)
+        );
+    }
+};
+
+template<typename TConstant>
+struct constant_expression : expression_body<constant_expression<TConstant> >
+{
     static const size_t positional_args = 0;
+    typedef TConstant return_type;
 
     const TConstant value;
-    ConstantExpr(TConstant value) : value(value){}
+    constant_expression(TConstant value) : value(value){}
 
-    template<size_t N, typename TArgs> TConstant evaluate(const TArgs&) const{
+    template<typename T>
+    TConstant operator()(const T&){
         return value;
     }
 };
 
-struct PositionalArgExpr{
-    static const size_t positional_args = 1;
+#include "placeholder.hpp"
 
-    template<size_t N, typename TArgs> typename get<N, TArgs>::type evaluate(const TArgs& args) const{
-        return get<N, TArgs>::value(args);
-    }
-};
-
-template<size_t N> struct SpecificArgExpr{
-    static const size_t positional_args = 0;
-
-    template<size_t _IGNORE, typename TArgs> typename get<N, TArgs>::type evaluate(const TArgs& args) const{
-        return get<N, TArgs>::value(args);
-    }
-};
-
-template<typename TLeft, typename TRight, typename TOperator> struct BinaryExpr{
-    const TLeft left;
-    const TRight right;
-
-    static const size_t positional_args = TLeft::positional_args + TRight::positional_args;
-
-    BinaryExpr(const TLeft left, const TRight right) :
-        left(left), right(right){}
-
-    template<size_t N, typename TArgs> int evaluate(const TArgs& args) const{
-        return binary_operator<TOperator, any, int, int>::evaluate(
-            left.template evaluate<N, TArgs>(args),
-            right.template evaluate<N + TLeft::positional_args, TArgs>(args)
-        );
-    }
-};
-
-/*******************************************************************************
- * Expression wrappers,
- * These guys keep track of the signature of the Lambda expression as a whole
- * without mixing it with the expression tree itself.
- *
- * The idea being that we can pick up our expression and arbitrarily modify the
- * signature of the lambda without modifying the expression tree itself. This is
- * desirable because:
- * - We want any expression to be able to take an arbitrary number of arguments
- *   which requires a ton of boilerplate.
- * - We want to be able to update the signature of our expression at anytime,
- *   say as the result of a binary expression, modifying the entire expression
- *   tree every time we need to update the signature is tedious, error prone,
- *   and slow.
- ******************************************************************************/
-template<typename TExpression, typename TFunc> struct Expression :
-    FuncN<Expression<TExpression, TFunc>, TFunc>
+struct placeholder_positional_expression : expression_body<placeholder_positional_expression>
 {
-    const TExpression expression;
-    typedef TExpression expression_type;
-    typedef TFunc function_type;
+    static const size_t positional_args = 1;
+    // Don't know what to do with the return type here
+    
+    template<typename T>
+    typename args::get<T::position, T>::type
+    operator()(const T& args){
+        return args::value<T::position>(args);
+    }
+};
 
-    Expression(TExpression expression) : expression(expression){}
+using namespace operators;
 
-    template<typename TR, typename TArgs> TR apply_tuple(const TArgs& args) const{
-        return expression.template evaluate<0, TArgs>(
-            args
+template<typename TOperator, typename TLeft, typename TRight>
+struct binary_operator_expression : expression_body<binary_operator_expression<TOperator, TLeft, TRight> >
+{
+    static const size_t positional_args = TLeft::positional_args + TRight::positional_args;
+    // Don't know what to do with the return type here
+    
+    TLeft left;
+    TRight right;
+    binary_operator_expression(TLeft left, TRight right) : left(left), right(right){}
+    
+    template<typename T>
+    int
+    operator()(const T& args){
+        return binary_operator<TOperator, any, int, int>::evaluate(
+            left(args), right(args::position_add<TLeft>(args))
         );
     }
 };
 
-/*******************************************************************************
- * Operator definitions
- ******************************************************************************/
+template<typename TExpression, typename TSignature>
+struct expression : functions::function_wrapper<TExpression, TSignature>{
+    expression(TExpression expression) :
+        functions::function_wrapper<TExpression, TSignature>(expression)
+    {};
+};
 
-// Lambda Keyword //////////////////////////////////////////////////////////////
+template<typename T>
+struct expression_traits{
+    typedef constant_expression<T> expression;
+    typedef functions::signature<T> signature;
+    static const bool implicit = false;
+    static expression make(T arg){
+        return expression(arg);
+    }
+};
+
+template<> struct expression_traits<placeholder::PlaceholderPositional>{
+    typedef placeholder_positional_expression expression;
+    typedef functions::signature<int, int> signature;
+    static const bool implicit = true;
+    static expression make(placeholder::PlaceholderPositional){
+        return expression();
+    }
+};
+
+template<typename TExpression, typename TSignature>
+struct expression_traits<expression<TExpression, TSignature> >{
+    typedef TExpression expression;
+    typedef TSignature signature;
+    static const bool implicit = true;
+    static expression make(lambda_expression::expression<TExpression, TSignature> arg){
+        return arg.callable;
+    }
+};
+
+template<typename T>
+typename expression_traits<T>::expression
+make_expression(T value){
+    return expression_traits<T>::make(value);
+};
+
 struct LambdaKeyword {} lambda;
 
-Expression<
-    PositionalArgExpr,
-    FuncSig1<int, int>
+template<typename T>
+expression<
+    typename expression_traits<T>::expression,
+    typename expression_traits<T>::signature
 >
-operator /(LambdaKeyword, const PlaceholderPositional&){
-    return Expression<
-        PositionalArgExpr,
-        FuncSig1<int, int>
-    >(
-        PositionalArgExpr()
-    );
+operator/ (const LambdaKeyword&, T rhs){
+    return expression<
+        typename expression_traits<T>::expression,
+        typename expression_traits<T>::signature
+    >(make_expression(rhs));
 }
 
-template<typename TExpression, typename TFunc>
-Expression<TExpression, TFunc>
-operator /(LambdaKeyword, const Expression<TExpression, TFunc>& rhs){
-    return rhs;
-}
+#include "operators.hpp"
 
-template<typename TConstant>
-Expression<
-    ConstantExpr<TConstant>,
-    FuncSig0<TConstant>
->
-operator /(LambdaKeyword, const TConstant& constant){
-    return Expression<
-        ConstantExpr<TConstant>,
-        FuncSig0<TConstant>
-    >(
-        ConstantExpr<TConstant>(constant)
-    );
-}
+template<typename TOperator, typename TLeft, typename TRight>
+struct binary_operator_impl{
+    static const bool enabled = expression_traits<TLeft>::implicit || expression_traits<TRight>::implicit;
 
+    typedef typename expression_traits<TLeft>::expression  left_expression;
+    typedef typename expression_traits<TLeft>::signature   left_signature;
+    typedef typename expression_traits<TRight>::expression right_expression;
+    typedef typename expression_traits<TRight>::signature  right_signature;
+    typedef binary_operator_expression<TOperator,left_expression,right_expression> expression;
+    typedef typename signatures::merge_concat<left_signature, right_signature>::type signature;
 
-template<typename TCondition, typename TTrueBranch, typename TFalseBranch> struct IfExpr{
-    static const size_t positional_args = 
-        TCondition::positional_args +
-        TTrueBranch::positional_args +
-        TFalseBranch::positional_args;
+    typedef lambda_expression::expression<expression, signature> return_type;
 
-    TCondition condition;
-    TTrueBranch true_branch;
-    TFalseBranch false_branch;
-
-    IfExpr(
-        TCondition condition,
-        TTrueBranch true_branch,
-        TFalseBranch false_branch
-    ) : condition(condition), true_branch(true_branch), false_branch(false_branch){}
-
-    template<size_t N, typename TArgs> int evaluate(const TArgs& args) const{
-        if(condition.template evaluate<N, TArgs>(args)){
-            return true_branch.template evaluate<N + TCondition::positional_args, TArgs>(args);
-        }else{
-            return false_branch.template evaluate<N + TCondition::positional_args + TTrueBranch::positional_args, TArgs>(args);
-        }
-    }
+    static return_type create(TLeft left, TRight right){
+        return return_type(
+            expression(make_expression(left), make_expression(right))
+        );
+    };
 };
 
-Expression<
-    IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>,
-    FuncSig3<int, int, int, int>
->
-IF(const PlaceholderPositional&, const PlaceholderPositional&, const PlaceholderPositional&){
-    return Expression<
-        IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>,
-        FuncSig3<int, int, int, int>
-    >(
-        IfExpr<PositionalArgExpr, PositionalArgExpr, PositionalArgExpr>(
-            PositionalArgExpr(), PositionalArgExpr(), PositionalArgExpr()
-        )
-    );
-}
+#define BIN(SYMBOL, OPERATOR)                                                                  \
+    template<typename TLeft, typename TRight>                                                 \
+    typename binary_operator_impl<operators::OPERATOR, TLeft, TRight>::return_type            \
+    operator SYMBOL(TLeft left, TRight right){                                                \
+        return binary_operator_impl<operators::OPERATOR, TLeft, TRight>::create(left, right); \
+    }
 
-// Other operators /////////////////////////////////////////////////////////////
-template<typename TWrapper>
-Expression<
-    BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>,
-    typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
->
-operator +(const TWrapper& wrapper, const PlaceholderPositional&){
-    return Expression<
-        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>,
-        typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
-    >(
-        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, add>(
-            wrapper.expression, PositionalArgExpr()
-        )
-    );
-}
+BIN(+, add);
+BIN(-, sub);
+BIN(*, mul);
+BIN(/, div);
 
-template<typename TWrapper, typename TConstant>
-Expression<
-    BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>,
-    typename TWrapper::function_type
->
-operator +(const TWrapper& wrapper, const TConstant& constant){
-    return Expression<
-        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>,
-        typename TWrapper::function_type
-    >(
-        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, add>(
-            wrapper.expression, ConstantExpr<TConstant>(constant)
-        )
-    );
-}
+BIN(>, lt);
+BIN(<, gt);
+#undef BIN
 
-template<typename TWrapper>
-Expression<
-    BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>,
-    typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
->
-operator *(const TWrapper& wrapper, const PlaceholderPositional&){
-    return Expression<
-        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>,
-        typename FuncSigMerge<typename TWrapper::function_type, FuncSig1<int, int> >::type
-    >(
-        BinaryExpr<typename TWrapper::expression_type, PositionalArgExpr, mul>(
-            wrapper.expression, PositionalArgExpr()
-        )
-    );
-}
-
-template<typename TWrapper, typename TConstant>
-Expression<
-    BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>,
-    typename TWrapper::function_type
->
-operator *(const TWrapper& wrapper, const TConstant& constant){
-    return Expression<
-        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>,
-        typename TWrapper::function_type
-    >(
-        BinaryExpr<typename TWrapper::expression_type, ConstantExpr<TConstant>, mul>(
-            wrapper.expression, ConstantExpr<TConstant>(constant)
-        )
-    );
-}
 }} // namespace functionalcpp::lambda_expression
 
 #endif // FUNCTIONALCPP__LAMBDA_EXPRESSION__HPP
